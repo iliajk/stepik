@@ -3,9 +3,7 @@ package org.example;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 
 public class Main {
@@ -20,6 +18,66 @@ public class Main {
         int[] a1 = {-1, 3, 3, 6, 9, 10, 11, 12};
         int[] a2 = {0, 2, 4, 6, 8, 13, 14, 15};
         System.out.println("[1,3,5,7,9,10,11,12] + [0,2,4,6,8,13,14,15] = " + Arrays.toString(mergeArrays(a1, a2)));
+        String[] roles = {"Городничий", "Аммос Федорович", "Артемий Филиппович", "Лука Лукич", "Пётр"};
+        String[] text = {"Городничий: Я пригласил вас, господа, с тем, чтобы сообщить вам пренеприятное известие: к нам едет ревизор.",
+                "Аммос Федорович: Как ревизор?", "Артемий Филиппович: Как ревизор?",
+                "Городничий: Ревизор из Петербурга, инкогнито. И еще с секретным предписаньем.",
+                "Аммос Федорович: Вот те на!", "Артемий Филиппович: Вот не было заботы, так подай!",
+                "Лука Лукич: Господи боже! еще и с секретным предписаньем!",
+                "Лука Лукич : Господи боже! еще и с секретным предписаньем!"};
+        System.out.println(printTextPerRole(roles, text));
+    }
+
+    /**
+     * You are given a list of roles and a script for the play in the form of an array of lines.
+     *
+     * @param roles     role of person
+     * @param textLines text of person
+     * @return string text of role
+     */
+
+    public static String printTextPerRole(String[] roles, String[] textLines) {
+        // use StringBuilder for optimal work with text
+        StringBuilder result = new StringBuilder();
+
+        // map for each replic
+        Map<String, StringBuilder> roleLines = new HashMap<>();
+
+        // init map
+        for (String role : roles) {
+            roleLines.put(role, new StringBuilder());
+        }
+
+        // each string of scenario
+        for (int i = 0; i < textLines.length; i++) {
+            String line = textLines[i];
+            // look for ':'
+            int colonIndex = line.indexOf(":");
+            if (colonIndex == -1) {
+                continue;
+            }
+
+            String role = line.substring(0, colonIndex).trim();
+            String text = line.substring(colonIndex + 1);
+
+            if (roleLines.containsKey(role)) {
+                roleLines.get(role).append((i + 1) + ")" + text + "\n");
+            }
+        }
+
+        // prepare final text
+        for (String role : roles) {
+            result.append(role).append(":\n");
+            result.append(roleLines.get(role));
+            result.append("\n");
+        }
+
+        // remove last \n
+        if (!result.isEmpty() && result.charAt(result.length() - 1) == '\n') {
+            result.setLength(result.length() - 1);
+        }
+
+        return result.toString();
     }
 
     /**
@@ -34,11 +92,11 @@ public class Main {
         int i = 0;
         int j = 0;
         while (i < a1.length || j < a2.length) {
-            if(i >= a1.length){
+            if (i >= a1.length) {
                 resultList.add(a2[j]);
                 j++;
                 continue;
-            } else if(j >= a2.length){
+            } else if (j >= a2.length) {
                 resultList.add(a1[i]);
                 i++;
                 continue;
