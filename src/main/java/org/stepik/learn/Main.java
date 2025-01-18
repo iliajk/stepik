@@ -1,8 +1,9 @@
-package org.example;
+package org.stepik.learn;
 
-import java.math.BigDecimal;
+import org.stepik.learn.Robot.Direction;
+import org.stepik.learn.Robot.Robot;
+
 import java.math.BigInteger;
-import java.math.MathContext;
 import java.util.*;
 
 
@@ -26,6 +27,9 @@ public class Main {
                 "Лука Лукич: Господи боже! еще и с секретным предписаньем!",
                 "Лука Лукич : Господи боже! еще и с секретным предписаньем!"};
         System.out.println(printTextPerRole(roles, text));
+        Robot robot = new Robot(0,0, Direction.UP);
+        Robot.moveRobot(robot, 17,-54);
+        System.out.println("Robot coordinates: x = " + robot.getX() + ", y = " + robot.getY());
     }
 
     /**
