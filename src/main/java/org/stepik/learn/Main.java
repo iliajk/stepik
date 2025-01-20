@@ -1,10 +1,13 @@
 package org.stepik.learn;
 
+import org.stepik.learn.Complex.ComplexNumber;
 import org.stepik.learn.Robot.Direction;
 import org.stepik.learn.Robot.Robot;
+import org.stepik.learn.TextAnalyzer.*;
 
 import java.math.BigInteger;
 import java.util.*;
+import java.util.function.DoubleUnaryOperator;
 
 
 public class Main {
@@ -27,9 +30,95 @@ public class Main {
                 "Лука Лукич: Господи боже! еще и с секретным предписаньем!",
                 "Лука Лукич : Господи боже! еще и с секретным предписаньем!"};
         System.out.println(printTextPerRole(roles, text));
-        Robot robot = new Robot(0,0, Direction.UP);
-        Robot.moveRobot(robot, 17,-54);
+        Robot robot = new Robot(0, 0, Direction.UP);
+        Robot.moveRobot(robot, 17, -54);
         System.out.println("Robot coordinates: x = " + robot.getX() + ", y = " + robot.getY());
+        ComplexNumber a = new ComplexNumber(1.88d, 1.88d);
+        ComplexNumber b = new ComplexNumber(1.88d, 1.88d);
+        System.out.println(a.equals(b));
+        System.out.println(a.hashCode());
+        System.out.println(b.hashCode());
+        System.out.println(integrate(x -> 1, 0, 10));//10.0
+        System.out.println(integrate(x -> x + 2, 0, 10));//70.0
+        System.out.println(integrate(x -> Math.sin(x) / x, 1, 5));//0.603848
+
+        // инициализация анализаторов для проверки в порядке данного набора анализаторов
+        String[] spamKeywords = {"spam", "bad"};
+        int commentMaxLength = 40;
+        TextAnalyzer[] textAnalyzers1 = {
+                new SpamAnalyzer(spamKeywords),
+                new NegativeTextAnalyzer(),
+                new TooLongTextAnalyzer(commentMaxLength)
+        };
+        TextAnalyzer[] textAnalyzers2 = {
+                new SpamAnalyzer(spamKeywords),
+                new TooLongTextAnalyzer(commentMaxLength),
+                new NegativeTextAnalyzer()
+        };
+        TextAnalyzer[] textAnalyzers3 = {
+                new TooLongTextAnalyzer(commentMaxLength),
+                new SpamAnalyzer(spamKeywords),
+                new NegativeTextAnalyzer()
+        };
+        TextAnalyzer[] textAnalyzers4 = {
+                new TooLongTextAnalyzer(commentMaxLength),
+                new NegativeTextAnalyzer(),
+                new SpamAnalyzer(spamKeywords)
+        };
+        TextAnalyzer[] textAnalyzers5 = {
+                new NegativeTextAnalyzer(),
+                new SpamAnalyzer(spamKeywords),
+                new TooLongTextAnalyzer(commentMaxLength)
+        };
+        TextAnalyzer[] textAnalyzers6 = {
+                new NegativeTextAnalyzer(),
+                new TooLongTextAnalyzer(commentMaxLength),
+                new SpamAnalyzer(spamKeywords)
+        };
+        // тестовые комментарии
+        String[] tests = new String[8];
+        tests[0] = "This comment is so good.";                            // OK
+        tests[1] = "This comment is so Loooooooooooooooooooooooooooong."; // TOO_LONG
+        tests[2] = "Very negative comment !!!!=(!!!!;";                   // NEGATIVE_TEXT
+        tests[3] = "Very BAAAAAAAAAAAAAAAAAAAAAAAAD comment with :|;";    // NEGATIVE_TEXT or TOO_LONG
+        tests[4] = "This comment is so bad....";                          // SPAM
+        tests[5] = "The comment is a spam, maybeeeeeeeeeeeeeeeeeeeeee!";  // SPAM or TOO_LONG
+        tests[6] = "Negative bad :( spam.";                               // SPAM or NEGATIVE_TEXT
+        tests[7] = "Very bad, very neg =(, very ..................";      // SPAM or NEGATIVE_TEXT or TOO_LONG
+        TextAnalyzer[][] textAnalyzers = {textAnalyzers1, textAnalyzers2, textAnalyzers3,
+                textAnalyzers4, textAnalyzers5, textAnalyzers6};
+        int numberOfAnalyzer; // номер анализатора, указанный в идентификаторе textAnalyzers{№}
+        int numberOfTest = 0; // номер теста, который соответствует индексу тестовых комментариев
+        for (String test : tests) {
+            numberOfAnalyzer = 1;
+            System.out.print("test #" + numberOfTest + ": ");
+            System.out.println(test);
+            for (TextAnalyzer[] analyzers : textAnalyzers) {
+                System.out.print(numberOfAnalyzer + ": ");
+                System.out.println(checkLabels(analyzers, test));
+                numberOfAnalyzer++;
+            }
+            numberOfTest++;
+        }
+    }
+
+    public static Label checkLabels(TextAnalyzer[] analyzers, String text) {
+        for (TextAnalyzer analyzer : analyzers) {
+            Label result = analyzer.processText(text);
+            if (result != Label.OK) {
+                return result;
+            }
+        }
+        return Label.OK;
+    }
+
+    public static double integrate(DoubleUnaryOperator f, double a, double b) {
+        double result = 0;
+        final double error = 0.000001;
+        for (double i = a; i <= b; i += error) {
+            result += f.applyAsDouble(i) * (error);
+        }
+        return result;
     }
 
     /**
