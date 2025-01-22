@@ -100,6 +100,21 @@ public class Main {
             }
             numberOfTest++;
         }
+        tryCatch();
+    }
+
+    public static void tryCatch() throws InterruptedException {
+        try {
+            System.exit(0);
+            //throw new Exception();
+        } catch (Exception e) {
+            //e.printStackTrace();
+            return;
+            //throw new InterruptedException();
+        } finally {
+            System.out.println("finally");
+        }
+        //System.out.println("after tryCatch");
     }
 
     public static Label checkLabels(TextAnalyzer[] analyzers, String text) {
