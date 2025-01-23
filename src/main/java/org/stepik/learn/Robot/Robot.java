@@ -1,12 +1,15 @@
 package org.stepik.learn.Robot;
 
-public class Robot {
+import java.util.Random;
+
+public class Robot{
     private int x;
     private int y;
     private Direction direction;
 
     public static void moveRobot(Robot robot, int toX, int toY) {
         while (true) {
+            if (new Random().nextInt(100) > 98) throw new RobotConnectionException("Т - тигр, а ты пидр");
             if (robot.getY() != toY) {
                 if (toY > 0) {
                     if (robot.getDirection() != Direction.UP) {

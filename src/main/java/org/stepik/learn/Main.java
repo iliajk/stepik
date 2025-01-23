@@ -1,8 +1,7 @@
 package org.stepik.learn;
 
 import org.stepik.learn.Complex.ComplexNumber;
-import org.stepik.learn.Robot.Direction;
-import org.stepik.learn.Robot.Robot;
+import org.stepik.learn.Robot.*;
 import org.stepik.learn.TextAnalyzer.*;
 
 import java.math.BigInteger;
@@ -31,7 +30,7 @@ public class Main {
                 "Лука Лукич : Господи боже! еще и с секретным предписаньем!"};
         System.out.println(printTextPerRole(roles, text));
         Robot robot = new Robot(0, 0, Direction.UP);
-        Robot.moveRobot(robot, 17, -54);
+        Robot.moveRobot(robot, 3, -5);
         System.out.println("Robot coordinates: x = " + robot.getX() + ", y = " + robot.getY());
         ComplexNumber a = new ComplexNumber(1.88d, 1.88d);
         ComplexNumber b = new ComplexNumber(1.88d, 1.88d);
@@ -101,12 +100,61 @@ public class Main {
             numberOfTest++;
         }
         tryCatch();
+        ConnectionManager cm = new ConnectionManager();
+        moveRobot(cm, 100, 100);
     }
+
+    public static void moveRobot(RobotConnectionManager robotConnectionManager, int toX, int toY) throws RobotConnectionException {
+        RobotConnection conn = null;
+        for (int i = 0; i < 3; i++) {
+            try {
+                conn = robotConnectionManager.getConnection();
+                conn.moveRobotTo(toX, toY);
+                break;
+            } catch (RobotConnectionException e) {
+                if (i >= 2) {
+                    throw new RobotConnectionException(e.toString());
+                }
+            } finally {
+                try {
+                    conn.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+        //        Robot robot = new Robot(0, 0, Direction.UP);
+//        int retryCount = 0;
+//        Connection connection = new Connection(robot);
+//        while (retryCount < 3) {
+//            try {
+//                if (connection == null) {
+//                    connection = new Connection(robot);
+//                }
+//                connection.moveRobotTo(toX, toY);
+//                break;
+//            } catch (RobotConnectionException e) {
+//                retryCount++;
+//                if (retryCount > 2) {
+//                    throw new RobotConnectionException("");
+//                }
+//            } finally {
+//                connection.close();
+//                connection = null;
+//            }
+//
+//    }
+
+
+    }
+
 
     public static void tryCatch() throws InterruptedException {
         try {
-            System.exit(0);
-            //throw new Exception();
+            //System.exit(0);
+            throw new Exception();
         } catch (Exception e) {
             //e.printStackTrace();
             return;
